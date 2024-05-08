@@ -7,7 +7,7 @@ export interface Props {
   open?: boolean;
   class?: string;
   loading?: "eager" | "lazy";
-  children: ComponentChildren;
+  children?: ComponentChildren;
   aside: ComponentChildren;
   id?: string;
 }
