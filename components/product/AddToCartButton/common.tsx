@@ -2,7 +2,7 @@ import { AddToCartParams } from "apps/commerce/types.ts";
 import { useState } from "preact/hooks";
 import Button from "../../../components/ui/Button.tsx";
 import { sendEvent } from "../../../sdk/analytics.tsx";
-import { useUI } from "../../../sdk/useUI.ts";
+import { MINICART_DRAWER_ID, useUI } from "../../../sdk/useUI.ts";
 
 export interface Props {
   /** @description: sku name */
@@ -12,7 +12,6 @@ export interface Props {
 
 const useAddToCart = ({ eventParams, onAddItem }: Props) => {
   const [loading, setLoading] = useState(false);
-  const { displayCart } = useUI();
 
   const onClick = async (e: MouseEvent) => {
     e.preventDefault();
@@ -28,7 +27,12 @@ const useAddToCart = ({ eventParams, onAddItem }: Props) => {
         params: eventParams,
       });
 
-      displayCart.value = true;
+      const input = document.getElementById(
+        MINICART_DRAWER_ID,
+      ) as HTMLInputElement;
+      if (input) {
+        input.checked = true;
+      }
     } finally {
       setLoading(false);
     }

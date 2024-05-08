@@ -1,8 +1,7 @@
 import { AnalyticsItem } from "apps/commerce/types.ts";
-import Button from "../../../../components/ui/Button.tsx";
 import Icon from "../../../../components/ui/Icon.tsx";
 import { sendEvent } from "../../../../sdk/analytics.tsx";
-import { useUI } from "../../../../sdk/useUI.ts";
+import { MINICART_DRAWER_ID } from "../../../../sdk/useUI.ts";
 
 interface Props {
   loading: boolean;
@@ -12,7 +11,6 @@ interface Props {
 }
 
 function CartButton({ loading, currency, total, items }: Props) {
-  const { displayCart } = useUI();
   const totalItems = items.length;
 
   const onClick = () => {
@@ -20,7 +18,6 @@ function CartButton({ loading, currency, total, items }: Props) {
       name: "view_cart",
       params: { currency, value: total, items },
     });
-    displayCart.value = true;
   };
 
   return (
@@ -33,15 +30,15 @@ function CartButton({ loading, currency, total, items }: Props) {
         {totalItems > 9 ? "9+" : totalItems}
       </span>
 
-      <Button
-        class="btn-circle btn-sm btn-ghost"
+      <label
+        for={MINICART_DRAWER_ID}
+        class="btn btn-circle btn-sm btn-ghost"
         aria-label="open cart"
-        data-deco={displayCart.value && "open-cart"}
-        loading={loading}
+        data-deco="open-cart"
         onClick={onClick}
       >
         <Icon id="ShoppingCart" size={24} strokeWidth={2} />
-      </Button>
+      </label>
     </div>
   );
 }

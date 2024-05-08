@@ -5,16 +5,14 @@
 
 import { signal } from "@preact/signals";
 
-const displayCart = signal(false);
-const displayMenu = signal(false);
 const displaySearchPopup = signal(false);
-const displaySearchDrawer = signal(false);
+
+export const MINICART_DRAWER_ID = "minicart-drawer";
+export const SIDEMENU_DRAWER_ID = "sidemenu-drawer";
+export const SEARCHBAR_DRAWER_ID = "searchbar-drawer";
 
 const state = {
-  displayCart,
-  displayMenu,
   displaySearchPopup,
-  displaySearchDrawer,
 };
 
 // Keyboard event listeners
