@@ -1,6 +1,6 @@
 import type { Product } from "apps/commerce/types.ts";
 import { mapProductToAnalyticsItem } from "apps/commerce/utils/productToAnalyticsItem.ts";
-import { usePartialSection } from "deco/hooks/usePartialSection.ts";
+import { useSection } from "deco/hooks/usePartialSection.ts";
 import { SendEventOnView } from "../../components/Analytics.tsx";
 import ProductCard from "../../components/product/ProductCard.tsx";
 import Icon from "../../components/ui/Icon.tsx";
@@ -8,7 +8,6 @@ import Header from "../../components/ui/SectionHeader.tsx";
 import Slider from "../../components/ui/Slider.tsx";
 import { useId } from "../../sdk/useId.ts";
 import { useOffer } from "../../sdk/useOffer.ts";
-import { usePlatform } from "../../sdk/usePlatform.tsx";
 
 /** @titleBy title */
 interface Tab {
@@ -35,7 +34,6 @@ function TabbedProductShelf({
   tabIndex,
 }: Props) {
   const id = useId();
-  const platform = usePlatform();
   const ti = typeof tabIndex === "number"
     ? Math.min(Math.max(tabIndex, 0), tabs.length)
     : 0;
@@ -59,7 +57,9 @@ function TabbedProductShelf({
           {tabs.map((tab, index) => (
             <button
               class={`tab tab-lg ${index === ti ? "tab-active" : ""}`}
-              {...usePartialSection({ props: { tabIndex: index } })}
+              hx-get={useSection({ props: { tabIndex: index } })}
+              hx-swap="outerHTML"
+              hx-target="closest section"
             >
               {tab.title}
             </button>
@@ -80,7 +80,6 @@ function TabbedProductShelf({
               <ProductCard
                 product={product}
                 itemListName={title}
-                platform={platform}
                 index={index}
               />
             </Slider.Item>
