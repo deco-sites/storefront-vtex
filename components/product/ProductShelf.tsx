@@ -8,7 +8,6 @@ import Slider from "../../components/ui/Slider.tsx";
 import { clx } from "../../sdk/clx.ts";
 import { useId } from "../../sdk/useId.ts";
 import { useOffer } from "../../sdk/useOffer.ts";
-import { usePlatform } from "../../sdk/usePlatform.tsx";
 
 export interface Props {
   products: Product[] | null;
@@ -32,7 +31,6 @@ function ProductShelf({
   layout,
 }: Props) {
   const id = useId();
-  const platform = usePlatform();
 
   if (!products || products.length === 0) {
     return null;
@@ -69,7 +67,7 @@ function ProductShelf({
           "px-0 md:px-5 container",
         )}
       >
-        <Slider class="carousel carousel-center sm:carousel-end sm:gap-1 row-start-2 row-end-5">
+        <Slider class="carousel carousel-center gap-6 sm:carousel-end row-start-2 row-end-5">
           {products?.map((product, index) => (
             <Slider.Item
               index={index}
@@ -82,7 +80,6 @@ function ProductShelf({
               <ProductCard
                 product={product}
                 itemListName={title}
-                platform={platform}
                 index={index}
               />
             </Slider.Item>

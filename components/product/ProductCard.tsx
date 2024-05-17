@@ -1,18 +1,16 @@
 import type { Product } from "apps/commerce/types.ts";
 import { mapProductToAnalyticsItem } from "apps/commerce/utils/productToAnalyticsItem.ts";
 import Image from "apps/website/components/Image.tsx";
-import type { Platform } from "../../apps/site.ts";
 import { SendEventOnClick } from "../../components/Analytics.tsx";
-import Avatar from "../../components/ui/Avatar.tsx";
-import {
-  default as WishlistButtonVtex,
-  default as WishlistButtonWake,
-} from "../../islands/WishlistButton/vtex.tsx";
 import { clx } from "../../sdk/clx.ts";
 import { formatPrice } from "../../sdk/format.ts";
 import { relative } from "../../sdk/url.ts";
 import { useOffer } from "../../sdk/useOffer.ts";
+import { usePlatform } from "../../sdk/usePlatform.tsx";
 import { useVariantPossibilities } from "../../sdk/useVariantPossiblities.ts";
+import WishlistButton from "../wishlist/WishlistButton.tsx";
+import AddToCartButton from "./AddToCartButton.tsx";
+import { Ring } from "./ProductVariantSelector.tsx";
 
 interface Props {
   product: Product;
@@ -24,8 +22,6 @@ interface Props {
 
   /** @description index of the product card in the list */
   index?: number;
-
-  platform?: Platform;
 }
 
 const WIDTH = 200;
@@ -35,20 +31,64 @@ function ProductCard({
   product,
   preload,
   itemListName,
-  platform,
   index,
 }: Props) {
-  const { url, productID, name, image: images, offers, isVariantOf } = product;
+  const platform = usePlatform();
+
+  const {
+    url,
+    productID,
+    image: images,
+    offers,
+    isVariantOf,
+    additionalProperty = [],
+  } = product;
   const id = `product-card-${productID}`;
   const hasVariant = isVariantOf?.hasVariant ?? [];
   const productGroupID = isVariantOf?.productGroupID;
+  const title = isVariantOf?.name ?? product.name;
   const description = product.description || isVariantOf?.description;
   const [front, back] = images ?? [];
-  const { listPrice, price, installments } = useOffer(offers);
+  const { listPrice, price, installments, seller = "1" } = useOffer(offers);
   const possibilities = useVariantPossibilities(hasVariant, product);
   const variants = Object.entries(Object.values(possibilities)[0] ?? {});
   const relativeUrl = relative(url);
   const aspectRatio = `${WIDTH} / ${HEIGHT}`;
+  const eventItem = mapProductToAnalyticsItem({ product, price, listPrice });
+
+  const minicart = platform === "vtex"
+    ? { seller, productID }
+    : platform === "shopify"
+    ? { lines: { merchandiseId: productID } }
+    : platform === "vnda"
+    ? {
+      quantity: 1,
+      itemId: productID,
+      attributes: Object.fromEntries(
+        additionalProperty.map(({ name, value }) => [name, value]),
+      ),
+    }
+    : platform === "wake"
+    ? {
+      productVariantId: Number(productID),
+      quantity: 1,
+    }
+    : platform === "nuvemshop"
+    ? {
+      quantity: 1,
+      itemId: Number(productGroupID),
+      add_to_cart_enhanced: "1",
+      attributes: Object.fromEntries(
+        additionalProperty.map(({ name, value }) => [name, value]),
+      ),
+    }
+    : platform === "linx"
+    ? {
+      ProductID: productGroupID,
+      SkuID: productID,
+      Quantity: 1,
+    }
+    : null;
 
   return (
     <div
@@ -75,7 +115,7 @@ function ProductCard({
         }}
       />
 
-      <div class="flex flex-col gap-2 lg:group-hover:-translate-y-2">
+      <div class="flex flex-col gap-2">
         <figure
           class="relative overflow-hidden"
           style={{ aspectRatio }}
@@ -98,16 +138,12 @@ function ProductCard({
               OFF
             </div>
             <div class="lg:group-hover:block">
-              {platform === "vtex" && (
-                <WishlistButtonVtex
-                  productGroupID={productGroupID}
+              {productGroupID && (
+                // @ts-expect-error todo @gimenes
+                <WishlistButton
+                  variant="icon"
                   productID={productID}
-                />
-              )}
-              {platform === "wake" && (
-                <WishlistButtonWake
                   productGroupID={productGroupID}
-                  productID={productID}
                 />
               )}
             </div>
@@ -161,30 +197,23 @@ function ProductCard({
         </figure>
 
         {/* SKU Selector */}
-        <ul class="flex items-center justify-center gap-2">
-          {variants
-            .map(([value, link]) => [value, relative(link)] as const)
-            .map(([value, link]) => (
-              <li>
-                <a href={link}>
-                  <Avatar
-                    content={value}
-                    variant={link === relativeUrl
-                      ? "active"
-                      : link
-                      ? "default"
-                      : "disabled"}
-                  />
-                </a>
-              </li>
-            ))}
+        <ul class={clx("flex items-center justify-center gap-4", "min-h-8")}>
+          {variants.length > 1 &&
+            variants.map(([value, link]) => [value, relative(link)] as const)
+              .map(([value, link]) => (
+                <li>
+                  <a href={link} class="avatar cursor-pointer">
+                    <Ring value={value} />
+                  </a>
+                </li>
+              ))}
         </ul>
 
         {/* Name/Description */}
         <div class="flex flex-col">
           <h2
             class="truncate text-base lg:text-lg uppercase"
-            dangerouslySetInnerHTML={{ __html: name ?? "" }}
+            dangerouslySetInnerHTML={{ __html: title ?? "" }}
           />
 
           <div
@@ -208,13 +237,12 @@ function ProductCard({
           ou {installments}
         </span>
 
-        <a
-          href={relativeUrl}
-          aria-label="view product"
-          class="btn btn-block"
-        >
-          Ver produto
-        </a>
+        {minicart && (
+          <AddToCartButton
+            minicart={minicart}
+            event={{ name: "add_to_cart", params: { items: [eventItem] } }}
+          />
+        )}
       </div>
     </div>
   );

@@ -3,28 +3,9 @@
  * like clicking on add to cart and the cart modal being displayed
  */
 
-import { signal } from "@preact/signals";
-
-const displayCart = signal(false);
-const displayMenu = signal(false);
-const displaySearchPopup = signal(false);
-const displaySearchDrawer = signal(false);
-
-const state = {
-  displayCart,
-  displayMenu,
-  displaySearchPopup,
-  displaySearchDrawer,
-};
-
-// Keyboard event listeners
-addEventListener("keydown", (e: KeyboardEvent) => {
-  const isK = e.key === "k" || e.key === "K" || e.keyCode === 75;
-
-  // Open Searchbar on meta+k
-  if (e.metaKey === true && isK) {
-    displaySearchPopup.value = true;
-  }
-});
-
-export const useUI = () => state;
+export const MINICART_CONTAINER_ID = "minicart";
+export const MINICART_DRAWER_ID = "minicart-drawer";
+export const SIDEMENU_DRAWER_ID = "sidemenu-drawer";
+export const SEARCHBAR_DRAWER_ID = "searchbar-drawer";
+export const SEARCHBAR_POPUP_ID = "searchbar-popup";
+export const SEARCHBAR_INPUT_FORM_ID = "searchbar-form";
