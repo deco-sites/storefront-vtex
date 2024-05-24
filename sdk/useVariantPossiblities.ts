@@ -1,4 +1,5 @@
 import type { ProductLeaf, PropertyValue } from "apps/commerce/types.ts";
+import { useOffer } from "./useOffer.ts";
 
 export type Possibilities = Record<string, Record<string, string | undefined>>;
 
@@ -17,6 +18,7 @@ export const useVariantPossibilities = (
     const { url, additionalProperty = [], productID } = variant;
     const isSelected = productID === selected.productID;
     const specs = additionalProperty.filter(({ name }) => !omit.has(name!));
+    const { availability } = useOffer(variant.offers)
 
     for (let it = 0; it < specs.length; it++) {
       const name = specs[it].name!;
@@ -32,7 +34,7 @@ export const useVariantPossibilities = (
       const isSelectable = it === 0 ||
         specs.every((s) => s.name === name || selectedSpecs.has(hash(s)));
 
-      possibilities[name][value] = isSelected
+        possibilities[name][value] = availability !== "https://schema.org/InStock" ? undefined : isSelected
         ? url
         : isSelectable
         ? possibilities[name][value] || url
