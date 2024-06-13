@@ -16,11 +16,11 @@ export const loader = (props: Props, __, ctx) => {
   const parseSrcSet = (imgSrcSet: string) =>
     imgSrcSet.split(", ").forEach((src) => setPreload(src.split(" ")[0]));
 
-  if (desktopImg) {
-    const imgSrcSet = getSrcSet(desktopImg, 1440, 600, "cover");
-
-    parseSrcSet(imgSrcSet);
-  }
+  // if (desktopImg) {
+  //   const imgSrcSet = getSrcSet(desktopImg, 1440, 600, "cover");
+  //
+  //   parseSrcSet(imgSrcSet);
+  // }
   if (mobileImg) {
     const imgSrcSet = getSrcSet(mobileImg, 430, 590, "cover");
     parseSrcSet(imgSrcSet);
