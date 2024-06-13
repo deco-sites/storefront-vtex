@@ -21,7 +21,6 @@ export const loader = (props: Props, __, ctx) => {
   //
   //   parseSrcSet(imgSrcSet);
   // }
-
   if (mobileImg) {
     const imgSrcSet = getSrcSet(mobileImg, 430, 590, "cover");
     parseSrcSet(imgSrcSet);
