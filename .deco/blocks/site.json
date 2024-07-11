@@ -1,13 +1,14 @@
 {
   "seo": {
     "type": "website",
-    "image": "https://ozksgdmyrqcxcwhnbepg.supabase.co/storage/v1/object/public/assets/2177/a5d890ba-e5b8-471e-8b77-7412c1d4fa56",
     "title": "Storefront",
     "jsonLDs": [],
     "noIndexing": false,
     "description": "Improve your page performance with deco.cx ",
     "titleTemplate": "%s | deco.cx",
-    "descriptionTemplate": "%s | Deco.cx"
+    "descriptionTemplate": "%s | Deco.cx",
+    "image": "https://ozksgdmyrqcxcwhnbepg.supabase.co/storage/v1/object/public/assets/2291/7b597c6f-f39f-4a70-ad5e-23cbf5e4211d",
+    "favicon": "https://ozksgdmyrqcxcwhnbepg.supabase.co/storage/v1/object/public/assets/2291/b6c7bfc3-782d-4e8d-8899-5679ae8823a9"
   },
   "theme": {
     "__resolveType": "Fashion theme"
