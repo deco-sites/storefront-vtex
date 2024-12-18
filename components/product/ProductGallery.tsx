@@ -1,17 +1,15 @@
 import { Head } from "$fresh/runtime.ts";
 import { PageInfo, Product } from "apps/commerce/types.ts";
-import { usePartialSection } from "deco/hooks/usePartialSection.ts";
 import ProductCard from "../../components/product/ProductCard.tsx";
 import { Format } from "../../components/search/SearchResult.tsx";
 import Spinner from "../../components/ui/Spinner.tsx";
 import ShowMore from "../../islands/ShowMore.tsx";
 import { usePlatform } from "../../sdk/usePlatform.tsx";
-
+import { usePartialSection } from "@deco/deco/hooks";
 export interface Columns {
   mobile?: 1 | 2;
   desktop?: 2 | 3 | 4 | 5;
 }
-
 export interface Props {
   products: Product[] | null;
   pageInfo: PageInfo;
@@ -22,26 +20,20 @@ export interface Props {
   };
   url: URL;
 }
-
 const MOBILE_COLUMNS = {
   1: "grid-cols-1",
   2: "grid-cols-2",
 };
-
 const DESKTOP_COLUMNS = {
   2: "sm:grid-cols-2",
   3: "sm:grid-cols-3",
   4: "sm:grid-cols-4",
   5: "sm:grid-cols-5",
 };
-
-function ProductGallery(
-  { products, pageInfo, layout, offset, url }: Props,
-) {
+function ProductGallery({ products, pageInfo, layout, offset, url }: Props) {
   const platform = usePlatform();
   const mobile = MOBILE_COLUMNS[layout?.columns?.mobile ?? 2];
   const desktop = DESKTOP_COLUMNS[layout?.columns?.desktop ?? 4];
-
   const nextPage = pageInfo.nextPage
     ? new URL(pageInfo.nextPage, url.href)
     : null;
@@ -49,11 +41,8 @@ function ProductGallery(
   if (pageInfo.nextPage && nextPage) {
     partialUrl?.searchParams.set("partial", "true");
   }
-
   return (
-    <div
-      class={`grid ${mobile} gap-2 items-center ${desktop} sm:gap-10`}
-    >
+    <div class={`grid ${mobile} gap-2 items-center ${desktop} sm:gap-10`}>
       {layout?.format == "Show More" && (
         <Head>
           {pageInfo.nextPage && <link rel="next" href={pageInfo.nextPage} />}
@@ -75,9 +64,7 @@ function ProductGallery(
 
       {(layout && layout?.format === "Show More") && (
         <>
-          <ShowMore
-            pageInfo={pageInfo}
-          >
+          <ShowMore pageInfo={pageInfo}>
             {partialUrl && (
               <div>
                 <div class="mt-2">
@@ -101,5 +88,4 @@ function ProductGallery(
     </div>
   );
 }
-
 export default ProductGallery;

@@ -8,7 +8,6 @@
  * Note that this is the most performatic way to perform a search, since
  * no JavaScript is shipped to the browser!
  */
-
 import ProductCard from "../../components/product/ProductCard.tsx";
 import Button from "../../components/ui/Button.tsx";
 import Icon from "../../components/ui/Icon.tsx";
@@ -18,10 +17,9 @@ import { useId } from "../../sdk/useId.ts";
 import { useSuggestions } from "../../sdk/useSuggestions.ts";
 import { useUI } from "../../sdk/useUI.ts";
 import { Suggestion } from "apps/commerce/types.ts";
-import { Resolved } from "deco/engine/core/resolver.ts";
 import { useEffect, useRef } from "preact/compat";
 import type { Platform } from "../../apps/site.ts";
-
+import { type Resolved } from "@deco/deco";
 // Editable props
 export interface Props {
   /**
@@ -42,23 +40,22 @@ export interface Props {
    * @default q
    */
   name?: string;
-
   /**
    * @title Suggestions Integration
    * @todo: improve this typings ({query: string, count: number}) => Suggestions
    */
   loader: Resolved<Suggestion | null>;
-
   platform?: Platform;
 }
-
-function Searchbar({
-  placeholder = "What are you looking for?",
-  action = "/s",
-  name = "q",
-  loader,
-  platform,
-}: Props) {
+function Searchbar(
+  {
+    placeholder = "What are you looking for?",
+    action = "/s",
+    name = "q",
+    loader,
+    platform,
+  }: Props,
+) {
   const id = useId();
   const { displaySearchPopup } = useUI();
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -66,13 +63,11 @@ function Searchbar({
   const { products = [], searches = [] } = payload.value ?? {};
   const hasProducts = Boolean(products.length);
   const hasTerms = Boolean(searches.length);
-
   useEffect(() => {
     if (displaySearchPopup.value === true) {
       searchInputRef.current?.focus();
     }
   }, [displaySearchPopup.value]);
-
   return (
     <div
       class="w-full grid gap-8 px-4 py-6 overflow-y-hidden"
@@ -97,14 +92,12 @@ function Searchbar({
           name={name}
           onInput={(e) => {
             const value = e.currentTarget.value;
-
             if (value) {
               sendEvent({
                 name: "search",
                 params: { search_term: value },
               });
             }
-
             setQuery(value);
           }}
           placeholder={placeholder}
@@ -129,11 +122,7 @@ function Searchbar({
       >
         <div class="gap-4 grid grid-cols-1 sm:grid-rows-1 sm:grid-cols-[150px_1fr]">
           <div class="flex flex-col gap-6">
-            <span
-              class="font-medium text-xl"
-              role="heading"
-              aria-level={3}
-            >
+            <span class="font-medium text-xl" role="heading" aria-level={3}>
               Sugestões
             </span>
             <ul id="search-suggestion" class="flex flex-col gap-6">
@@ -141,11 +130,7 @@ function Searchbar({
                 <li>
                   <a href={`/s?q=${term}`} class="flex gap-4 items-center">
                     <span>
-                      <Icon
-                        id="MagnifyingGlass"
-                        size={24}
-                        strokeWidth={0.01}
-                      />
+                      <Icon id="MagnifyingGlass" size={24} strokeWidth={0.01} />
                     </span>
                     <span dangerouslySetInnerHTML={{ __html: term }} />
                   </a>
@@ -154,11 +139,7 @@ function Searchbar({
             </ul>
           </div>
           <div class="flex flex-col pt-6 md:pt-0 gap-6 overflow-x-hidden">
-            <span
-              class="font-medium text-xl"
-              role="heading"
-              aria-level={3}
-            >
+            <span class="font-medium text-xl" role="heading" aria-level={3}>
               Produtos sugeridos
             </span>
             <Slider class="carousel">
@@ -182,5 +163,4 @@ function Searchbar({
     </div>
   );
 }
-
 export default Searchbar;

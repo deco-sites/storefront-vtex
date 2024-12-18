@@ -4,11 +4,10 @@ import Drawers from "../../islands/Header/Drawers.tsx";
 import { usePlatform } from "../../sdk/usePlatform.tsx";
 import type { ImageWidget } from "apps/admin/widgets.ts";
 import type { SiteNavigationElement } from "apps/commerce/types.ts";
-import type { SectionProps } from "deco/types.ts";
 import Alert from "./Alert.tsx";
 import Navbar from "./Navbar.tsx";
 import { headerHeight } from "./constants.ts";
-
+import { type SectionProps } from "@deco/deco";
 export interface Logo {
   src: ImageWidget;
   alt: string;
@@ -21,27 +20,20 @@ export interface Buttons {
   hideWishlistButton?: boolean;
   hideCartButton?: boolean;
 }
-
 export interface Props {
   alerts?: string[];
-
   /** @title Search Bar */
   searchbar?: Omit<SearchbarProps, "platform">;
-
   /**
    * @title Navigation items
    * @description Navigation items used both on mobile and desktop menus
    */
   navItems?: SiteNavigationElement[] | null;
-
   /** @title Logo */
   logo?: Logo;
-
   logoPosition?: "left" | "center";
-
   buttons?: Buttons;
 }
-
 function Header({
   alerts,
   searchbar,
@@ -80,15 +72,10 @@ function Header({
 }: SectionProps<typeof loader>) {
   const platform = usePlatform();
   const items = navItems ?? [];
-
   return (
     <>
       <header style={{ height: headerHeight }}>
-        <Drawers
-          menu={{ items }}
-          searchbar={searchbar}
-          platform={platform}
-        >
+        <Drawers menu={{ items }} searchbar={searchbar} platform={platform}>
           <div class="bg-base-100 fixed w-full z-50">
             {alerts && alerts.length > 0 && <Alert alerts={alerts} />}
             <Navbar
@@ -105,9 +92,7 @@ function Header({
     </>
   );
 }
-
 export const loader = (props: Props, _req: Request, ctx: AppContext) => {
   return { ...props, device: ctx.device };
 };
-
 export default Header;

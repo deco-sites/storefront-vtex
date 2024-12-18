@@ -1,6 +1,5 @@
 import type { Product } from "apps/commerce/types.ts";
 import { mapProductToAnalyticsItem } from "apps/commerce/utils/productToAnalyticsItem.ts";
-import { usePartialSection } from "deco/hooks/usePartialSection.ts";
 import { SendEventOnView } from "../../components/Analytics.tsx";
 import ProductCard from "../../components/product/ProductCard.tsx";
 import Icon from "../../components/ui/Icon.tsx";
@@ -9,13 +8,12 @@ import Slider from "../../components/ui/Slider.tsx";
 import { useId } from "../../sdk/useId.ts";
 import { useOffer } from "../../sdk/useOffer.ts";
 import { usePlatform } from "../../sdk/usePlatform.tsx";
-
+import { usePartialSection } from "@deco/deco/hooks";
 /** @titleBy title */
 interface Tab {
   title: string;
   products: Product[] | null;
 }
-
 export interface Props {
   tabs: Tab[];
   title?: string;
@@ -26,25 +24,18 @@ export interface Props {
   };
   tabIndex?: number;
 }
-
-function TabbedProductShelf({
-  tabs,
-  title,
-  description,
-  layout,
-  tabIndex,
-}: Props) {
+function TabbedProductShelf(
+  { tabs, title, description, layout, tabIndex }: Props,
+) {
   const id = useId();
   const platform = usePlatform();
   const ti = typeof tabIndex === "number"
     ? Math.min(Math.max(tabIndex, 0), tabs.length)
     : 0;
   const { products } = tabs[ti];
-
   if (!products || products.length === 0) {
     return null;
   }
-
   return (
     <div class="w-full container  py-8 flex flex-col gap-8 lg:gap-12 lg:py-10">
       <Header
@@ -120,5 +111,4 @@ function TabbedProductShelf({
     </div>
   );
 }
-
 export default TabbedProductShelf;
